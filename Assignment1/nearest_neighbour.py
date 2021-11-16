@@ -4,19 +4,22 @@ import numpy as np
 from scipy.spatial import distance
 import matplotlib.pyplot as plt
 
+
 class Classifier:
     def __init__(self, k, xTrain, yTrain):
         self.k = k
         self.xTrain = xTrain
         self.yTrain = yTrain
+
     def clasify(self, x):
-        dist = np.array( [(np.linalg.norm(self.xTrain[i] - x), self.yTrain[i]) for i in range(len(self.xTrain))])
-        dist = dist[dist[:,0].argsort()]        #sort by the first column
-        topK = dist[:self.k]                         #get only k first rows
-        topK = topK[:,1]                        #get the second column
+        dist = np.array([(np.linalg.norm(self.xTrain[i] - x), self.yTrain[i]) for i in range(len(self.xTrain))])
+        dist = dist[dist[:, 0].argsort()]  # sort by the first column
+        topK = dist[:self.k]  # get only k first rows
+        topK = topK[:, 1]  # get the second column
         values, counts = np.unique(topK, return_counts=True)
-        ind = np.argmax(counts)                 #together they bring the index of the most frequent value
+        ind = np.argmax(counts)  # together they bring the index of the most frequent value
         return values[ind]
+
 
 def gensmallm(x_list: list, y_list: list, m: int):
     """
@@ -52,6 +55,7 @@ def learnknn(k: int, x_train: np.array, y_train: np.array):
     """
     return Classifier(k, x_train, y_train)
 
+
 def predictknn(classifier, x_test: np.array):
     """
 
@@ -62,7 +66,7 @@ def predictknn(classifier, x_test: np.array):
     yPrediction = np.array([classifier.clasify(x) for x in x_test])
     # for x in x_test:
     #     np.append(yPrediction, classifier.clasify(x))
-    return yPrediction.reshape((len(yPrediction),1))
+    return yPrediction.reshape((len(yPrediction), 1))
 
 
 def simple_test():
@@ -82,8 +86,6 @@ def simple_test():
 
     x_test, y_test = gensmallm([test0, test1, test2, test3], [0, 1, 2, 3], 50)
 
-
-
     classifer = learnknn(5, x_train, y_train)
 
     preds = predictknn(classifer, x_test)
@@ -98,12 +100,14 @@ def simple_test():
     # this line should print the classification of the i'th test sample.
     print(f"The {i}'th test sample was classified as {preds[i]}")
 
+
 def verySimpleTest():
-    arrSorted = np.array([1,1,5,3,1,9,2,2,2,1,2,3,1])
+    arrSorted = np.array([1, 1, 5, 3, 1, 9, 2, 2, 2, 1, 2, 3, 1])
     values, counts = np.unique(arrSorted, return_counts=True)
     ind = np.argmax(counts)
 
-    print("expected: \n", 2 , "\ngot: \n", values[ind])
+    print("expected: \n", 2, "\ngot: \n", values[ind])
+
 
 def testRepeaterOverTrainSize():
     k = 1
@@ -133,7 +137,7 @@ def testRepeaterOverTrainSize():
             x_train, y_train = gensmallm([train1, train3, train4, train6], [1, 3, 4, 6], n)
             classifier = learnknn(k, x_train, y_train)
             preds = predictknn(classifier, x_test)
-            preds = preds.reshape(testLen,)
+            preds = preds.reshape(testLen, )
             currAvg = np.mean(y_test != preds)
             sumMeanI += currAvg
             if currAvg < minError:
@@ -142,16 +146,17 @@ def testRepeaterOverTrainSize():
                 maxError = currAvg
         minKeeper = np.append(minKeeper, minError)
         maxKeeper = np.append(maxKeeper, maxError)
-        meansError = np.append(meansError, [sumMeanI/10.0])
+        meansError = np.append(meansError, [sumMeanI / 10.0])
 
     return meansError, testSize, minKeeper, maxKeeper
+
 
 def corrupt(y_train):
     indexes = [random.randint(0, 99) for i in range(20)]
     options = [1, 3, 4, 6]
     for i in indexes:
         newVal = random.choice(options)
-        while (newVal == y_train[i]):
+        while newVal == y_train[i]:
             newVal = random.choice(options)
         y_train[i] = newVal
 
@@ -172,7 +177,7 @@ def testRepeaterOverK(corrupted):
     x_test, y_test = gensmallm([test1, test3, test4, test6], [1, 3, 4, 6], testLen)
 
     meansError = np.array([])
-    for k in range(1,12):
+    for k in range(1, 12):
         sumMeanI = 0
         for i in range(10):
             x_train, y_train = gensmallm([train1, train3, train4, train6], [1, 3, 4, 6], 100)
@@ -180,29 +185,25 @@ def testRepeaterOverK(corrupted):
                 corrupt(y_train)
             classifier = learnknn(k, x_train, y_train)
             preds = predictknn(classifier, x_test)
-            preds = preds.reshape(testLen,)
+            preds = preds.reshape(testLen, )
             sumMeanI += np.mean(y_test != preds)
 
-        meansError = np.append(meansError, [sumMeanI/10])
+        meansError = np.append(meansError, [sumMeanI / 10.0])
 
-    return np.array([i/testLen for i in meansError]), np.arange(1,12)
-
-
+    return meansError, np.arange(1, 12)
 
 
 if __name__ == '__main__':
-
     # before submitting, make sure that the function simple_test runs without errors
     meansErrorTrain, testSizeTrain, minError, maxError = testRepeaterOverTrainSize()
     plt.plot(testSizeTrain, meansErrorTrain, color="blue")
-    plt.plot(testSizeTrain,minError, color="green")
+    plt.plot(testSizeTrain, minError, color="green")
     plt.plot(testSizeTrain, maxError, color="red")
     plt.legend(["Average test error", "Minimum Error", "Maximum Error"])
     plt.title("Error over train size")
     plt.xlabel("Train size")
     plt.ylabel("Average test error")
     plt.show()
-
 
     meansErrorK, testSizeK = testRepeaterOverK(False)
     plt.plot(testSizeK, meansErrorK, color="blue")
@@ -219,5 +220,3 @@ if __name__ == '__main__':
     plt.xlabel("K")
     plt.ylabel("Average test error")
     plt.show()
-
-
