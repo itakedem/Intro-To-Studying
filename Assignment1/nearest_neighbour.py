@@ -146,14 +146,14 @@ def testRepeaterOverTrainSize():
 
     return meansError, testSize, minKeeper, maxKeeper
 
-def corrupt(y_test):
-    indexes = [random.randint(0, 100) for i in range(20)]
+def corrupt(y_train):
+    indexes = [random.randint(0, 99) for i in range(20)]
     options = [1, 3, 4, 6]
     for i in indexes:
         newVal = random.choice(options)
-        while (newVal == y_test[i]):
+        while (newVal == y_train[i]):
             newVal = random.choice(options)
-        y_test[i] = newVal
+        y_train[i] = newVal
 
 
 def testRepeaterOverK(corrupted):
@@ -177,7 +177,7 @@ def testRepeaterOverK(corrupted):
         for i in range(10):
             x_train, y_train = gensmallm([train1, train3, train4, train6], [1, 3, 4, 6], 100)
             if corrupted:
-                corrupt(y_test)
+                corrupt(y_train)
             classifier = learnknn(k, x_train, y_train)
             preds = predictknn(classifier, x_test)
             preds = preds.reshape(testLen,)
