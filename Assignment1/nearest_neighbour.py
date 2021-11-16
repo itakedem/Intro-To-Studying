@@ -1,8 +1,8 @@
 import random
 
-import numpy as np
-from scipy.spatial import distance
 import matplotlib.pyplot as plt
+import numpy as np
+import time
 
 
 class Classifier:
@@ -111,7 +111,7 @@ def verySimpleTest():
 
 def testRepeaterOverTrainSize():
     k = 1
-    data = np.load('mnist_all.npz')
+    data = np.load('Assignment1/mnist_all.npz')
     testLen = 4085
     train1 = data['train1']
     train3 = data['train3']
@@ -123,7 +123,7 @@ def testRepeaterOverTrainSize():
     test4 = data['test4']
     test6 = data['test6']
 
-    testSize = np.array([1, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
+    testSize = np.array([10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
     x_test, y_test = gensmallm([test1, test3, test4, test6], [1, 3, 4, 6], testLen)
 
     meansError = np.array([])
@@ -162,7 +162,7 @@ def corrupt(y_train):
 
 
 def testRepeaterOverK(corrupted):
-    data = np.load('mnist_all.npz')
+    data = np.load('Assignment1/mnist_all.npz')
     testLen = 4085
     train1 = data['train1']
     train3 = data['train3']
@@ -194,16 +194,23 @@ def testRepeaterOverK(corrupted):
 
 
 if __name__ == '__main__':
+    startTime = time.perf_counter()
     # before submitting, make sure that the function simple_test runs without errors
     meansErrorTrain, testSizeTrain, minError, maxError = testRepeaterOverTrainSize()
     plt.plot(testSizeTrain, meansErrorTrain, color="blue")
     plt.plot(testSizeTrain, minError, color="green")
     plt.plot(testSizeTrain, maxError, color="red")
+    plt.errorbar(testSizeTrain,
+                 meansErrorTrain,
+                 [meansErrorTrain - minError, maxError - meansErrorTrain],
+                 fmt='ok', lw=1,
+                 ecolor='tomato')
     plt.legend(["Average test error", "Minimum Error", "Maximum Error"])
     plt.title("Error over train size")
     plt.xlabel("Train size")
     plt.ylabel("Average test error")
     plt.show()
+    endTrainTime = time.perf_counter()
 
     meansErrorK, testSizeK = testRepeaterOverK(False)
     plt.plot(testSizeK, meansErrorK, color="blue")
@@ -213,6 +220,8 @@ if __name__ == '__main__':
     plt.ylabel("Average test error")
     plt.show()
 
+    endOverKFalseTime = time.perf_counter()
+
     meansErrorK, testSizeK = testRepeaterOverK(True)
     plt.plot(testSizeK, meansErrorK, color="blue")
     plt.legend(["Average test error"])
@@ -220,3 +229,11 @@ if __name__ == '__main__':
     plt.xlabel("K")
     plt.ylabel("Average test error")
     plt.show()
+
+    endOverKTrueTime = time.perf_counter()
+
+    print("testRepeaterOverTrainSize took ", (endTrainTime - startTime)/60, " minutes")
+    print("testRepeaterOverK(false) took ", (endOverKFalseTime - endTrainTime)/60, " minutes")
+    print("testRepeaterOverK(ture) took ", (endOverKTrueTime - endOverKFalseTime)/60, " minutes")
+    print("overall time passed is ", (endOverKTrueTime - startTime)/60, " minutes")
+    print("Itamar beat Tali in a pop quiz in Intro to Studying and analyzing of big data!")
