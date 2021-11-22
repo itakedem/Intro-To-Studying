@@ -64,8 +64,6 @@ def predictknn(classifier, x_test: np.array):
     :return: numpy array of size (n, 1) classifying the examples in x_test
     """
     yPrediction = np.array([classifier.clasify(x) for x in x_test])
-    # for x in x_test:
-    #     np.append(yPrediction, classifier.clasify(x))
     return yPrediction.reshape((len(yPrediction), 1))
 
 
@@ -153,7 +151,6 @@ def testRepeaterOverTrainSize():
 
 def corrupt(y):
     size = len(y)
-    indexes = [random.randint(0, size - 1) for i in range(int(size / 5))]
     for i in range(int(size / 5)):
         options = [1, 3, 4, 6]
         options.remove(y[i])
