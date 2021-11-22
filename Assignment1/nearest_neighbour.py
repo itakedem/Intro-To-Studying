@@ -111,7 +111,7 @@ def verySimpleTest():
 
 def testRepeaterOverTrainSize():
     k = 1
-    data = np.load('Assignment1/mnist_all.npz')
+    data = np.load('mnist_all.npz')
     testLen = 4085
     train1 = data['train1']
     train3 = data['train3']
@@ -151,18 +151,19 @@ def testRepeaterOverTrainSize():
     return meansError, testSize, minKeeper, maxKeeper
 
 
-def corrupt(y_train):
-    indexes = [random.randint(0, 99) for i in range(20)]
+def corrupt(y):
+    size = len(y)
+    indexes = [random.randint(0, size-1) for i in range(int(size/5))]
     options = [1, 3, 4, 6]
     for i in indexes:
         newVal = random.choice(options)
-        while newVal == y_train[i]:
+        while newVal == y[i]:
             newVal = random.choice(options)
-        y_train[i] = newVal
+        y[i] = newVal
 
 
 def testRepeaterOverK(corrupted):
-    data = np.load('Assignment1/mnist_all.npz')
+    data = np.load('mnist_all.npz')
     testLen = 4085
     train1 = data['train1']
     train3 = data['train3']
@@ -183,6 +184,7 @@ def testRepeaterOverK(corrupted):
             x_train, y_train = gensmallm([train1, train3, train4, train6], [1, 3, 4, 6], 100)
             if corrupted:
                 corrupt(y_train)
+                corrupt(y_test)
             classifier = learnknn(k, x_train, y_train)
             preds = predictknn(classifier, x_test)
             preds = preds.reshape(testLen, )
@@ -194,33 +196,32 @@ def testRepeaterOverK(corrupted):
 
 
 if __name__ == '__main__':
-    startTime = time.perf_counter()
     # before submitting, make sure that the function simple_test runs without errors
-    meansErrorTrain, testSizeTrain, minError, maxError = testRepeaterOverTrainSize()
-    plt.plot(testSizeTrain, meansErrorTrain, color="blue")
-    plt.plot(testSizeTrain, minError, color="green")
-    plt.plot(testSizeTrain, maxError, color="red")
-    plt.errorbar(testSizeTrain,
-                 meansErrorTrain,
-                 [meansErrorTrain - minError, maxError - meansErrorTrain],
-                 fmt='ok', lw=1,
-                 ecolor='tomato')
-    plt.legend(["Average test error", "Minimum Error", "Maximum Error"])
-    plt.title("Error over train size")
-    plt.xlabel("Train size")
-    plt.ylabel("Average test error")
-    plt.show()
-    endTrainTime = time.perf_counter()
-
-    meansErrorK, testSizeK = testRepeaterOverK(False)
-    plt.plot(testSizeK, meansErrorK, color="blue")
-    plt.legend(["Average test error"])
-    plt.title("Error over K")
-    plt.xlabel("K")
-    plt.ylabel("Average test error")
-    plt.show()
-
-    endOverKFalseTime = time.perf_counter()
+    # meansErrorTrain, testSizeTrain, minError, maxError = testRepeaterOverTrainSize()
+    # plt.plot(testSizeTrain, meansErrorTrain, color="blue")
+    # plt.plot(testSizeTrain, minError, color="green")
+    # plt.plot(testSizeTrain, maxError, color="red")
+    # plt.errorbar(testSizeTrain,
+    #              meansErrorTrain,
+    #              [meansErrorTrain - minError, maxError - meansErrorTrain],
+    #              fmt='ok', lw=1,
+    #              ecolor='tomato')
+    # plt.legend(["Average test error", "Minimum Error", "Maximum Error"])
+    # plt.title("Error over train size")
+    # plt.xlabel("Train size")
+    # plt.ylabel("Average test error")
+    # plt.show()
+    # plt.close()
+    #
+    # meansErrorK, testSizeK = testRepeaterOverK(False)
+    # plt.plot(testSizeK, meansErrorK, color="blue")
+    # plt.legend(["Average test error"])
+    # plt.title("Error over K")
+    # plt.xlabel("K")
+    # plt.ylabel("Average test error")
+    # plt.show()
+    # plt.close()
+    #
 
     meansErrorK, testSizeK = testRepeaterOverK(True)
     plt.plot(testSizeK, meansErrorK, color="blue")
@@ -229,11 +230,8 @@ if __name__ == '__main__':
     plt.xlabel("K")
     plt.ylabel("Average test error")
     plt.show()
+    plt.close()
 
-    endOverKTrueTime = time.perf_counter()
 
-    print("testRepeaterOverTrainSize took ", (endTrainTime - startTime)/60, " minutes")
-    print("testRepeaterOverK(false) took ", (endOverKFalseTime - endTrainTime)/60, " minutes")
-    print("testRepeaterOverK(ture) took ", (endOverKTrueTime - endOverKFalseTime)/60, " minutes")
-    print("overall time passed is ", (endOverKTrueTime - startTime)/60, " minutes")
-    print("Itamar beat Tali in a pop quiz in Intro to Studying and analyzing of big data!")
+
+
