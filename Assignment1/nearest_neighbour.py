@@ -154,12 +154,10 @@ def testRepeaterOverTrainSize():
 def corrupt(y):
     size = len(y)
     indexes = [random.randint(0, size-1) for i in range(int(size/5))]
-    options = [1, 3, 4, 6]
     for i in indexes:
-        newVal = random.choice(options)
-        while newVal == y[i]:
-            newVal = random.choice(options)
-        y[i] = newVal
+        options = [1, 3, 4, 6]
+        options.remove(y[i])
+        y[i] = random.choice(options)
 
 
 def testRepeaterOverK(corrupted):
