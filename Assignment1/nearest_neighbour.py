@@ -154,7 +154,7 @@ def testRepeaterOverTrainSize():
 def corrupt(y):
     size = len(y)
     indexes = [random.randint(0, size-1) for i in range(int(size/5))]
-    for i in indexes:
+    for i in range(int(size/5)):
         options = [1, 3, 4, 6]
         options.remove(y[i])
         y[i] = random.choice(options)
@@ -173,6 +173,7 @@ def testRepeaterOverK(corrupted):
     test4 = data['test4']
     test6 = data['test6']
 
+    #testLen = max(len(test1), len(test3), len(test4), len(test6))
     x_test, y_test = gensmallm([test1, test3, test4, test6], [1, 3, 4, 6], testLen)
 
     meansError = np.array([])
