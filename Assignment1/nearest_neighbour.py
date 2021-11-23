@@ -191,6 +191,7 @@ def testRepeaterOverK(corrupted):
 
 
 if __name__ == '__main__':
+    simple_test()
     # before submitting, make sure that the function simple_test runs without errors
     meansErrorTrain, testSizeTrain, minError, maxError = testRepeaterOverTrainSize()
     plt.plot(testSizeTrain, meansErrorTrain, color="blue")
@@ -206,7 +207,6 @@ if __name__ == '__main__':
     plt.xlabel("Train size")
     plt.ylabel("Average test error")
     plt.show()
-    plt.close()
 
     meansErrorK, testSizeK = testRepeaterOverK(False)
     plt.plot(testSizeK, meansErrorK, color="blue")
@@ -215,7 +215,6 @@ if __name__ == '__main__':
     plt.xlabel("K")
     plt.ylabel("Average test error")
     plt.show()
-    plt.close()
 
     meansErrorK, testSizeK = testRepeaterOverK(True)
     plt.plot(testSizeK, meansErrorK, color="blue")
@@ -224,4 +223,3 @@ if __name__ == '__main__':
     plt.xlabel("K")
     plt.ylabel("Average test error")
     plt.show()
-    plt.close()
