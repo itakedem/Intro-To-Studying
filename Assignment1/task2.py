@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import random
 import numpy as np
-from nearest_neighbour import gensmallm, learnknn, predictknn
+from Assignment1.nearest_neighbour import gensmallm, learnknn, predictknn
 
 
 def testRepeaterOverTrainSize():

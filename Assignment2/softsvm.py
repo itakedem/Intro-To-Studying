@@ -1,4 +1,5 @@
 import numpy as np
+import scipy.sparse as spr
 from cvxopt import solvers, matrix, spmatrix, spdiag, sparse
 import matplotlib.pyplot as plt
 
@@ -13,7 +14,16 @@ def softsvm(l, trainX: np.array, trainy: np.array):
     :param trainy: numpy array of size (m, 1) containing the labels of the training sample
     :return: linear predictor w, a numpy array of size (d, 1)
     """
-    raise NotImplementedError()
+    m, d = trainX.shape
+    u = matrix(np.concatenate((np.zeros(d), (1/m) * np.ones(m))))
+    H = np.block([[2 * l * np.eye(d, d), np.zeros((d, m))], [np.zeros((m, d)), np.zeros((m, m))]])
+    H = sparse(matrix(H))
+    A = np.block([[np.zeros((m, d)), np.eye(m, m)], [np.diag(trainy) @ trainX, np.eye(m, m)]])
+    A = sparse(matrix(A))
+    v = matrix(np.concatenate((np.zeros(m), np.ones(m))))
+    sol = solvers.qp(H, u, -A, -v)
+    sol = np.asarray(sol["x"])
+    return sol[:d]
 
 def simple_test():
     # load question 2 data
@@ -33,7 +43,6 @@ def simple_test():
 
     # run the softsvm algorithm
     w = softsvm(10, _trainX, _trainy)
-
     # tests to make sure the output is of the intended class and shape
     assert isinstance(w, np.ndarray), "The output of the function softsvm should be a numpy array"
     assert w.shape[0] == d and w.shape[1] == 1, f"The shape of the output should be ({d}, 1)"
