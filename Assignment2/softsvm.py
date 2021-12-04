@@ -14,9 +14,10 @@ def softsvm(l, trainX: np.array, trainy: np.array):
     :param trainy: numpy array of size (m, 1) containing the labels of the training sample
     :return: linear predictor w, a numpy array of size (d, 1)
     """
+    epsilon = 0.01
     m, d = trainX.shape
     u = matrix(np.concatenate((np.zeros(d), (1/m) * np.ones(m))))
-    H = np.block([[2 * l * np.eye(d, d), np.zeros((d, m))], [np.zeros((m, d)), np.zeros((m, m))]])
+    H = np.block([[2 * l * np.eye(d, d) + epsilon*np.eye(d, d), np.zeros((d, m))], [np.zeros((m, d)), np.zeros((m, m))]])
     H = sparse(matrix(H))
     A = np.block([[np.zeros((m, d)), np.eye(m, m)], [np.diag(trainy) @ trainX, np.eye(m, m)]])
     A = sparse(matrix(A))
