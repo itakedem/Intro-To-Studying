@@ -51,10 +51,10 @@ def test_softsvm(power, iter, l, sample_size):
     return meansError_test, meansError_train, minKeeper, maxKeeper, lambda_arr
 
 
-power = np.arange(1, 11)
+power = np.arange(1, 9)
 meansError_test, meansError_train, minError, maxError, lambda_arr = test_softsvm(power, 10, 10, 100)
-plt.semilogx(lambda_arr, meansError_train, color="blue", legend='Average train error')
-plt.semilogx(lambda_arr, meansError_test, color="green", legend='Average test error')
+plt.semilogx(lambda_arr, meansError_train, color="blue")
+plt.semilogx(lambda_arr, meansError_test, color="green")
 plt.errorbar(lambda_arr,
              meansError_train,
              [meansError_train - minError, maxError - meansError_train],
@@ -65,8 +65,19 @@ plt.errorbar(lambda_arr,
              [meansError_test - minError, maxError - meansError_test],
              fmt='ok', lw=1,
              ecolor='tomato')
-plt.legend()
+
+power = np.array([1, 3, 5, 8])
+meansError_test, meansError_train, minError, maxError, lambda_arr = test_softsvm(power, 1, 10, 1000)
+plt.scatter(lambda_arr, meansError_train, color="yellow")
+plt.scatter(lambda_arr, meansError_test, color="brown")
+plt.xscale('log')
+
+plt.legend(['Average train error 100', 'Average test error 100', 'Average train error 1000', 'Average test error 1000'])
 plt.title("Error over lambda")
 plt.xlabel("lambda")
 plt.ylabel("Average error")
 plt.show()
+
+
+
+
