@@ -2,25 +2,25 @@ from Assignment2.softsvm import softsvm
 import matplotlib.pyplot as plt
 import numpy as np
 
+data = np.load('ex2q2_mnist.npz')
+x_train = data['Xtrain']
+y_train = data['Ytrain']
+x_test = data['Xtest']
+y_test = data['Ytest']
 
 def take_random(x_list: list, y_list: list, m: int):
-    random_i = np.random.randint(0, len(y_list), m)
-    x_list_rnd = np.asarray([x_list[i] for i in random_i])
-    y_list_rnd = np.asarray([y_list[i] for i in random_i])
-    return x_list_rnd, y_list_rnd
+    indices = np.random.permutation(x_list.shape[0])
+    _x_list = x_list[indices[:m]]
+    _y_list = y_list[indices[:m]]
+    return _x_list, _y_list
 
 
 
 def predict(w, X: np.array):
-    return np.array([np.sign(x @ w) for x in X])
+    return np.sign(X @ w).flatten()
 
 
 def test_softsvm(power, iter, l, sample_size):
-    data = np.load('ex2q2_mnist.npz')
-    x_train = data['Xtrain']
-    y_train = data['Ytrain']
-    x_test = data['Xtest']
-    y_test = data['Ytest']
     meansError_test = np.array([])
     meansError_train = np.array([])
     minKeeper = np.array([])
@@ -33,12 +33,12 @@ def test_softsvm(power, iter, l, sample_size):
         maxError = 0
         minError = 10000
         for i in range(iter):
-            x_train, y_train = take_random(x_train, y_train, sample_size)
-            w = softsvm(l ** n, x_train, y_train)
+            _Xtrain, _Ytrain = take_random(x_train, y_train, sample_size)
+            w = softsvm(l ** n, _Xtrain, _Ytrain)
             y_test_predict = predict(w, x_test)
-            y_train_predict = predict(w, x_train)
+            y_train_predict = predict(w, _Xtrain)
             currAvg_test = np.mean(y_test != y_test_predict)
-            currAvg_train = np.mean(y_train != y_train_predict)
+            currAvg_train = np.mean(_Ytrain != y_train_predict)
             sumMeanI_test += currAvg_test
             sumMeanI_train += currAvg_train
             minError = min(minError, currAvg_test, currAvg_train)
@@ -51,22 +51,22 @@ def test_softsvm(power, iter, l, sample_size):
     return meansError_test, meansError_train, minKeeper, maxKeeper, lambda_arr
 
 
-power = np.arange(1, 9)
+power = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 meansError_test, meansError_train, minError, maxError, lambda_arr = test_softsvm(power, 10, 10, 100)
 plt.semilogx(lambda_arr, meansError_train, color="blue")
 plt.semilogx(lambda_arr, meansError_test, color="green")
 plt.errorbar(lambda_arr,
              meansError_train,
              [meansError_train - minError, maxError - meansError_train],
-             fmt='ok', lw=1,
+             fmt='none', lw=1,
              ecolor='tomato')
 plt.errorbar(lambda_arr,
              meansError_test,
              [meansError_test - minError, maxError - meansError_test],
-             fmt='ok', lw=1,
+             fmt='none', lw=1,
              ecolor='tomato')
 
-power = np.array([1, 3, 5, 8])
+power = [1, 3, 5, 8]
 meansError_test, meansError_train, minError, maxError, lambda_arr = test_softsvm(power, 1, 10, 1000)
 plt.scatter(lambda_arr, meansError_train, color="yellow")
 plt.scatter(lambda_arr, meansError_test, color="brown")

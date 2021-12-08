@@ -17,10 +17,10 @@ def softsvm(l, trainX: np.array, trainy: np.array):
     epsilon = 1
     m, d = trainX.shape
     u = matrix(np.concatenate((np.zeros(d), (1/m) * np.ones(m))))
-    H = np.block([[2 * l * np.eye(d, d), np.zeros((d, m))], [np.zeros((m, d)), np.zeros((m, m))]])
+    H = np.block([[2 * l * np.eye(d), np.zeros((d, m))], [np.zeros((m, d)), np.zeros((m, m))]])
     print(np.linalg.eigvals(H))
     H = sparse(matrix(H))
-    A = np.block([[np.zeros((m, d)), np.eye(m, m)], [np.diag(trainy) @ trainX, np.eye(m, m)]])
+    A = np.block([[np.zeros((m, d)), np.eye(m)], [np.diag(trainy) @ trainX, np.eye(m)]])
     A = sparse(matrix(A))
     v = matrix(np.concatenate((np.zeros(m), np.ones(m))))
     sol = solvers.qp(H, u, -A, -v)
