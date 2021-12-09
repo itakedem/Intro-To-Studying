@@ -21,17 +21,19 @@ def predict(w, X: np.array):
 
 
 def test_softsvm(power, iter, l, sample_size):
-    meansError_test = np.array([])
-    meansError_train = np.array([])
-    minKeeper = np.array([])
-    maxKeeper = np.array([])
-    lambda_arr = np.array([])
+    meansError_test = []
+    meansError_train = []
+    minKeeperTest = []
+    maxKeeperTest = []
+    minKeeperTrain = []
+    maxKeeperTrain = []
+    lambda_arr = []
     for n in power:
         lambda_arr = np.append(lambda_arr, l ** n)
         sumMeanI_test = 0
         sumMeanI_train = 0
-        maxError = 0
-        minError = 10000
+        currAvg_test_arr = []
+        currAvg_train_arr = []
         for i in range(iter):
             _Xtrain, _Ytrain = take_random(x_train, y_train, sample_size)
             w = softsvm(l ** n, _Xtrain, _Ytrain)
@@ -41,38 +43,39 @@ def test_softsvm(power, iter, l, sample_size):
             currAvg_train = np.mean(_Ytrain != y_train_predict)
             sumMeanI_test += currAvg_test
             sumMeanI_train += currAvg_train
-            minError = min(minError, currAvg_test, currAvg_train)
-            maxError = max(maxError, currAvg_test, currAvg_train)
-        minKeeper = np.append(minKeeper, minError)
-        maxKeeper = np.append(maxKeeper, maxError)
+            currAvg_test_arr.append(currAvg_test)
+            currAvg_train_arr.append(currAvg_train)
+        minKeeperTest.append(np.min(currAvg_test_arr))
+        maxKeeperTest.append(np.max(currAvg_test_arr))
+        minKeeperTrain.append(np.min(currAvg_train_arr))
+        maxKeeperTrain.append(np.max(currAvg_train_arr))
         meansError_test = np.append(meansError_test, [sumMeanI_test / iter])
         meansError_train = np.append(meansError_train, [sumMeanI_train / iter])
 
-    return meansError_test, meansError_train, minKeeper, maxKeeper, lambda_arr
+    return meansError_test, meansError_train, minKeeperTest, maxKeeperTest, minKeeperTrain, maxKeeperTrain,  lambda_arr
+
+
+
+
 
 
 power = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-meansError_test, meansError_train, minError, maxError, lambda_arr = test_softsvm(power, 10, 10, 100)
-plt.semilogx(lambda_arr, meansError_train, color="blue")
-plt.semilogx(lambda_arr, meansError_test, color="green")
+meansError_test, meansError_train, minKeeperTest, maxKeeperTest, minKeeperTrain, maxKeeperTrain, lambda_arr = test_softsvm(power, 10, 10, 100)
 plt.errorbar(lambda_arr,
              meansError_train,
-             [meansError_train - minError, maxError - meansError_train],
-             fmt='none', lw=1,
-             ecolor='tomato')
+             [meansError_train - minKeeperTrain, maxKeeperTrain - meansError_train],
+             label='Average train error 100')
 plt.errorbar(lambda_arr,
              meansError_test,
-             [meansError_test - minError, maxError - meansError_test],
-             fmt='none', lw=1,
-             ecolor='tomato')
+             [meansError_test - minKeeperTest, maxKeeperTest - meansError_test],
+              label='Average test error 100')
 
 power = [1, 3, 5, 8]
-meansError_test, meansError_train, minError, maxError, lambda_arr = test_softsvm(power, 1, 10, 1000)
-plt.scatter(lambda_arr, meansError_train, color="yellow")
-plt.scatter(lambda_arr, meansError_test, color="brown")
+meansError_test, meansError_train, minKeeperTest, maxKeeperTest, minKeeperTrain, maxKeeperTrain, lambda_arr = test_softsvm(power, 1, 10, 1000)
+plt.scatter(lambda_arr, meansError_train, color="purple", label='Average train error 1000')
+plt.scatter(lambda_arr, meansError_test, color="green", label='Average test error 1000')
 plt.xscale('log')
-
-plt.legend(['Average train error 100', 'Average test error 100', 'Average train error 1000', 'Average test error 1000'])
+plt.legend()
 plt.title("Error over lambda")
 plt.xlabel("lambda")
 plt.ylabel("Average error")
