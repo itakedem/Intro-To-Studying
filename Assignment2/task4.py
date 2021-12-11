@@ -135,8 +135,6 @@ def predict(alpha, sigma, x):
     return np.sign(sum)[0]
 
 
-print(np.linspace(-10, 10, num=200))
-
-endOverKTrueTime = time.perf_counter()
+Question4b()
 
 
