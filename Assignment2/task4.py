@@ -77,7 +77,7 @@ def fold_cross_validation(k, flag):
             err.append(curr_err)
         comb_err.append(np.mean(err))
     combo = combination[np.argmin(np.asarray(comb_err))]
-    return fullValidation(combo, flag)
+    return fullValidation(combo, flag), comb_err, combination
 
 
 def fullValidation(combo, flag):
@@ -96,25 +96,42 @@ def resizeArray(A: np.ndarray):
 
 def Question4b():
     startFirst = time.perf_counter()
-    err, combo = fold_cross_validation(5, 1)
+    err, optCombo, comb_errRBF, combinationsRBF = fold_cross_validation(5, 1)
     print("SoftSVMrbf results are:")
-    print("The optimal combination (lambda, sigma) is ", combo)
+    print("The optimal combination (lambda, sigma) is ", optCombo)
     print("The optimal error is ", err)
 
     endFirst = time.perf_counter()
     print()
 
-    err, combo = fold_cross_validation(5, 0)
+    err, optCombo, comb_err, combinations = fold_cross_validation(5, 0)
     print("SoftSVM results are:")
-    print("The optimal lambda is ", combo)
+    print("The optimal lambda is ", optCombo)
     print("The optimal error is ", err)
 
     endSecond = time.perf_counter()
+
+    print()
+    printAllErr(combinationsRBF, comb_errRBF, 1)
+    print()
+    printAllErr(combinations, comb_err, 0)
+    print()
 
     print("SoftSVMrbf took ", (endFirst - startFirst) / 60, " minutes")
     print("SoftSVM took ", (endSecond - endFirst) / 60, " minutes")
     print("overall time passed is ", (endSecond - startFirst) / 60, " minutes")
     print("Itamar beat Tali in a pop quiz in Intro to Studying and analyzing of big data!")
+
+def printAllErr(combination, error, flag):
+    for i in range(len(error)):
+        if (flag):
+            print("for the RBF case:")
+            print(f"for lambda {combination[i][0]} and sigma {combination[i][1]} the mean error is {error[i]}")
+        else:
+            print("for the softSVM case:")
+            print(f"for lambda {combination[i][0]} the mean error is {error[i]}")
+
+
 
 def Question4d():
     l = 100
