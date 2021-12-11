@@ -113,19 +113,21 @@ def Question4b():
 def Question4d():
     l = 100
     sigma = [0.01, 0.5, 1]
-    grid = np.linspace(-10, 10, num=200)
+    grid = np.linspace(-10, 10, num=100)
     for s in sigma:
         prediction = np.zeros((len(grid), len(grid)))
         alpha = softsvmbf(l, s, x_train, y_train.flatten())
         for i in range(len(grid)):
             for j in range(len(grid)):
-                prediction[i][j] = predict(alpha, sigma, np.array([grid[i], grid[j]]))
-        plot_grid(grid, prediction)
+                prediction[i][j] = predict(alpha, s, np.array([grid[i], grid[j]]))
+        plot_grid(grid, prediction, l, s)
 
-def plot_grid(grid, prediction):
+def plot_grid(grid, prediction, l, sigma):
     extent = np.min(grid), np.max(grid), np.min(grid), np.max(grid)
     cmap = colors.ListedColormap(['red', 'blue'])
     plt.imshow(prediction, extent=extent, cmap=cmap)
+    title = r'Resulting predictor $\lambda$ ='+str(l)+r' $\sigma$ ='+str(sigma)+ r' in ${R}^2$'
+    plt.title(title)
     plt.show()
 
 
@@ -137,9 +139,6 @@ def predict(alpha, sigma, x):
             continue
         sum += alpha[i] * gaussian_kernel(x_train[i], x, sigma)
     return np.sign(sum)[0]
-
-
-
 
 
 Question4d()
