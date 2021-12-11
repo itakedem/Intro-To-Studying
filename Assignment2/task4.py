@@ -104,7 +104,26 @@ def Question4d():
     sigma = [0.01, 0.5, 1]
     grid = np.linspace(-10, 10, num=200)
     for s in sigma:
-        prediction = np.zeros()
+        prediction = np.zeros((len(grid), len(grid)))
         alpha = softsvmbf(l, s, x_train, y_train)
+        for i in range(len(grid)):
+            for j in range(len(grid)):
+                prediction[i][j] = predict(alpha, sigma, np.array([grid[i], grid[j]]))
+        plot_grid(grid, prediction)
 
+def plot_grid(grid, prediction):
+    plt.imshow((grid, grid))
+
+
+
+def predict(alpha, sigma, x):
+    sum = 0
+    for i in range(len(alpha)):
+        if alpha[i] == 0:
+            continue
+        sum += alpha[i] * gaussian_kernel(x_train[i], x, sigma)
+    return np.sign(sum)[0]
+
+
+print(np.linspace(-10, 10, num=200))
 
