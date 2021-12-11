@@ -1,5 +1,6 @@
 from Assignment2.softsvm import softsvm
 import matplotlib.pyplot as plt
+from matplotlib import colors
 import numpy as np
 from Assignment2.softsvmrbf import softsvmbf, gram_matrix, gaussian_kernel
 import time
@@ -115,14 +116,17 @@ def Question4d():
     grid = np.linspace(-10, 10, num=200)
     for s in sigma:
         prediction = np.zeros((len(grid), len(grid)))
-        alpha = softsvmbf(l, s, x_train, y_train)
+        alpha = softsvmbf(l, s, x_train, y_train.flatten())
         for i in range(len(grid)):
             for j in range(len(grid)):
                 prediction[i][j] = predict(alpha, sigma, np.array([grid[i], grid[j]]))
         plot_grid(grid, prediction)
 
 def plot_grid(grid, prediction):
-    plt.imshow((grid, grid))
+    extent = np.min(grid), np.max(grid), np.min(grid), np.max(grid)
+    cmap = colors.ListedColormap(['red', 'blue'])
+    plt.imshow(prediction, extent=extent, cmap=cmap)
+    plt.show()
 
 
 
@@ -135,6 +139,9 @@ def predict(alpha, sigma, x):
     return np.sign(sum)[0]
 
 
-Question4b()
+
+
+
+Question4d()
 
 

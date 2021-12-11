@@ -36,7 +36,6 @@ def softsvmbf(l: float, sigma: float, trainX: np.array, trainy: np.array):
     gram = gram_matrix(trainX, sigma)
     H = np.block([[2 * l * gram, np.zeros((m, m))], [np.zeros((m, m)), np.zeros((m, m))]])
     H = H + (1e-6) * np.eye(m + m)
-    print("The eigen values are: ", np.linalg.eigvals(H))
     H = sparse(matrix(H))
     A = np.block([[np.zeros((m, m)), np.eye(m)], [np.diag(trainy) @ gram.T, np.eye(m)]])
     A = sparse(matrix(A))
