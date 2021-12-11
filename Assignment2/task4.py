@@ -56,24 +56,44 @@ def fold_cross_validation(k, flag):
     for c in combination:
         err = []
         for i in range(k):
-            sub_x_train = np.delete(split_x_train, i)
-            sub_y_train = np.delete(split_y_train, i)
+            sub_x_train = resizeArray(np.delete(split_x_train, i, 0))
+            sub_y_train = resizeArray(np.delete(split_y_train, i, 0))
             split_x_test = split_x_train[i]
             split_y_test = split_y_train[i]
             if flag:
                 alpha = softsvmbf(c[0], c[1], sub_x_train, sub_y_train)
                 curr_err = mrbf_error(alpha, sub_x_train, split_x_test, split_y_test, c[1])
-
             else:
                 w = softsvm(c, sub_x_train, sub_y_train)
                 curr_err = svm_error(w, split_x_test, split_y_test)
             err.append(curr_err)
         comb_err.append(np.mean(err))
-    return combination[np.argmin(np.asarray(comb_err))] #TODO:check what is wrong
+    combo = combination[np.argmin(np.asarray(comb_err))]
+    return fullValidation(combo, flag)
 
 
+def fullValidation(combo, flag):
+    if flag:
+        alpha = softsvmbf(combo[0], combo[1], x_train, y_train)
+        err = mrbf_error(alpha, x_train, x_test, y_test, combo[1])
+    else:
+        w = softsvm(combo, x_train, y_train)
+        err = svm_error(w, x_test, y_test)
+    return err, combo
 
 
-fold_cross_validation(3, 1)
+def resizeArray(A: np.ndarray):
+    a, b, c = A.shape
+    return A.reshape((a*b, c))
 
+err, combo = fold_cross_validation(5, 1)
+print("SoftSVMrbf results are:")
+print("The optimal combination (lambda, sigma) is ", combo)
+print("The optimal error is ", err)
 
+print()
+
+err, combo = fold_cross_validation(5, 0)
+print("SoftSVM results are:")
+print("The optimal lambda is ", combo)
+print("The optimal error is ", err)
