@@ -86,14 +86,25 @@ def resizeArray(A: np.ndarray):
     a, b, c = A.shape
     return A.reshape((a*b, c))
 
-err, combo = fold_cross_validation(5, 1)
-print("SoftSVMrbf results are:")
-print("The optimal combination (lambda, sigma) is ", combo)
-print("The optimal error is ", err)
+def Question4b():
+    err, combo = fold_cross_validation(5, 1)
+    print("SoftSVMrbf results are:")
+    print("The optimal combination (lambda, sigma) is ", combo)
+    print("The optimal error is ", err)
 
-print()
+    print()
 
-err, combo = fold_cross_validation(5, 0)
-print("SoftSVM results are:")
-print("The optimal lambda is ", combo)
-print("The optimal error is ", err)
+    err, combo = fold_cross_validation(5, 0)
+    print("SoftSVM results are:")
+    print("The optimal lambda is ", combo)
+    print("The optimal error is ", err)
+
+def Question4d():
+    l = 100
+    sigma = [0.01, 0.5, 1]
+    grid = np.linspace(-10, 10, num=200)
+    for s in sigma:
+        prediction = np.zeros()
+        alpha = softsvmbf(l, s, x_train, y_train)
+
+
