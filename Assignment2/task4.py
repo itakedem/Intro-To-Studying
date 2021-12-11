@@ -2,6 +2,7 @@ from Assignment2.softsvm import softsvm
 import matplotlib.pyplot as plt
 import numpy as np
 from Assignment2.softsvmrbf import softsvmbf, gram_matrix, gaussian_kernel
+import time
 
 
 data = np.load('ex2q4_data.npz')
@@ -87,17 +88,26 @@ def resizeArray(A: np.ndarray):
     return A.reshape((a*b, c))
 
 def Question4b():
+    startFirst = time.perf_counter()
     err, combo = fold_cross_validation(5, 1)
     print("SoftSVMrbf results are:")
     print("The optimal combination (lambda, sigma) is ", combo)
     print("The optimal error is ", err)
 
+    endFirst = time.perf_counter()
     print()
 
     err, combo = fold_cross_validation(5, 0)
     print("SoftSVM results are:")
     print("The optimal lambda is ", combo)
     print("The optimal error is ", err)
+
+    endSecond = time.perf_counter()
+
+    print("SoftSVMrbf took ", (endFirst - startFirst) / 60, " minutes")
+    print("SoftSVM took ", (endSecond - endFirst) / 60, " minutes")
+    print("overall time passed is ", (endSecond - startFirst) / 60, " minutes")
+    print("Itamar beat Tali in a pop quiz in Intro to Studying and analyzing of big data!")
 
 def Question4d():
     l = 100
@@ -126,4 +136,7 @@ def predict(alpha, sigma, x):
 
 
 print(np.linspace(-10, 10, num=200))
+
+endOverKTrueTime = time.perf_counter()
+
 
