@@ -62,12 +62,18 @@ def fold_cross_validation(k, flag):
             sub_y_train = resizeArray(np.delete(split_y_train, i, 0)).flatten()
             split_x_test = split_x_train[i]
             split_y_test = split_y_train[i]
+            start = time.perf_counter()
             if flag:
                 alpha = softsvmbf(c[0], c[1], sub_x_train, sub_y_train)
                 curr_err = mrbf_error(alpha, sub_x_train, split_x_test, split_y_test, c[1])
             else:
                 w = softsvm(c, sub_x_train, sub_y_train)
                 curr_err = svm_error(w, split_x_test, split_y_test)
+            end = time.perf_counter()
+            if (flag):
+                print ("softSVMrbf took ", (end - start) / 60, " minutes")
+            else:
+                print("softSVM took ", (end - start) / 60, " minutes")
             err.append(curr_err)
         comb_err.append(np.mean(err))
     combo = combination[np.argmin(np.asarray(comb_err))]
@@ -76,10 +82,10 @@ def fold_cross_validation(k, flag):
 
 def fullValidation(combo, flag):
     if flag:
-        alpha = softsvmbf(combo[0], combo[1], x_train, y_train)
+        alpha = softsvmbf(combo[0], combo[1], x_train, y_train.flatten())
         err = mrbf_error(alpha, x_train, x_test, y_test, combo[1])
     else:
-        w = softsvm(combo, x_train, y_train)
+        w = softsvm(combo, x_train, y_train.flatten())
         err = svm_error(w, x_test, y_test)
     return err, combo
 
@@ -141,6 +147,6 @@ def predict(alpha, sigma, x):
     return np.sign(sum)[0]
 
 
-Question4d()
+Question4b()
 
 
