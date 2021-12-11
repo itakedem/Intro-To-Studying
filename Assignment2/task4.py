@@ -74,6 +74,6 @@ def fold_cross_validation(k, flag):
 
 
 
-
+fold_cross_validation(3, 1)
 
 
