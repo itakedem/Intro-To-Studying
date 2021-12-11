@@ -38,7 +38,7 @@ def softsvmbf(l: float, sigma: float, trainX: np.array, trainy: np.array):
     H = H + (1e-6) * np.eye(m + m)
     print("The eigen values are: ", np.linalg.eigvals(H))
     H = sparse(matrix(H))
-    A = np.block([[np.zeros((m, m)), np.eye(m)], [np.diag(trainy.flatten()) @ gram.T, np.eye(m)]])
+    A = np.block([[np.zeros((m, m)), np.eye(m)], [np.diag(trainy) @ gram.T, np.eye(m)]])
     A = sparse(matrix(A))
     v = matrix(np.concatenate((np.zeros(m), np.ones(m))))
     sol = solvers.qp(H, u, -A, -v)

@@ -57,7 +57,7 @@ def fold_cross_validation(k, flag):
         err = []
         for i in range(k):
             sub_x_train = resizeArray(np.delete(split_x_train, i, 0))
-            sub_y_train = resizeArray(np.delete(split_y_train, i, 0))
+            sub_y_train = resizeArray(np.delete(split_y_train, i, 0)).flatten()
             split_x_test = split_x_train[i]
             split_y_test = split_y_train[i]
             if flag:
