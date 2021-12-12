@@ -48,7 +48,7 @@ def fold_cross_validation(k, flag):
     lambda_arr = [1, 10, 100]
     sigma_arr = [0.001, 0.5, 1]
     if flag:
-        combination = [[l, s] for l in lambda_arr for s in sigma_arr]
+        combination = [[lam, s] for lam in lambda_arr for s in sigma_arr]
     else:
         combination = lambda_arr
     split_x_train = np.asarray(np.split(x_train, k))
@@ -129,7 +129,7 @@ def printAllErr(combination, error, flag):
             print(f"for lambda {combination[i][0]} and sigma {combination[i][1]} the mean error is {error[i]}")
         else:
             print("for the softSVM case:")
-            print(f"for lambda {combination[i][0]} the mean error is {error[i]}")
+            print(f"for lambda {combination[i]} the mean error is {error[i]}")
 
 
 
