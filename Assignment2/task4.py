@@ -96,7 +96,7 @@ def resizeArray(A: np.ndarray):
 
 def Question4b():
     startFirst = time.perf_counter()
-    err, optCombo, comb_errRBF, combinationsRBF = fold_cross_validation(5, 1)
+    (err, optCombo), comb_errRBF, combinationsRBF = fold_cross_validation(5, 1)
     print("SoftSVMrbf results are:")
     print("The optimal combination (lambda, sigma) is ", optCombo)
     print("The optimal error is ", err)
@@ -104,7 +104,7 @@ def Question4b():
     endFirst = time.perf_counter()
     print()
 
-    err, optCombo, comb_err, combinations = fold_cross_validation(5, 0)
+    (err, optCombo), comb_err, combinations = fold_cross_validation(5, 0)
     print("SoftSVM results are:")
     print("The optimal lambda is ", optCombo)
     print("The optimal error is ", err)
