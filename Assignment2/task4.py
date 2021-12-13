@@ -46,7 +46,7 @@ def svm_error(w, xTest, yTest):
 
 def fold_cross_validation(k, flag):
     lambda_arr = [1, 10, 100]
-    sigma_arr = [0.001, 0.5, 1]
+    sigma_arr = [0.01, 0.5, 1]
     if flag:
         combination = [[lam, s] for lam in lambda_arr for s in sigma_arr]
     else:
