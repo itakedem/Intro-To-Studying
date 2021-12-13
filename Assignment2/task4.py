@@ -4,6 +4,8 @@ from matplotlib import colors
 import numpy as np
 from Assignment2.softsvmrbf import softsvmbf, gram_matrix, gaussian_kernel
 import time
+import matplotlib.patches as mpatches
+
 
 
 data = np.load('ex2q4_data.npz')
@@ -148,9 +150,11 @@ def Question4d():
 def plot_grid(grid, prediction, l, sigma):
     extent = np.min(grid), np.max(grid), np.min(grid), np.max(grid)
     cmap = colors.ListedColormap(['red', 'blue'])
+    patches = [mpatches.Patch(color='red', label="-1"), mpatches.Patch(color='blue', label="1")]
     plt.imshow(prediction, extent=extent, cmap=cmap)
     title = r'Resulting predictor $\lambda$ ='+str(l)+r' $\sigma$ ='+str(sigma)+ r' in ${R}^2$'
     plt.title(title)
+    plt.legend(handles=patches)
     plt.show()
 
 
@@ -164,6 +168,6 @@ def predict(alpha, sigma, x):
     return np.sign(sum)[0]
 
 
-Question4b()
+Question4d()
 
 
