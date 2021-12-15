@@ -2,8 +2,7 @@ from Assignment2.softsvm import softsvm
 import matplotlib.pyplot as plt
 from matplotlib import colors
 import numpy as np
-from Assignment2.softsvmrbf import softsvmbf, gram_matrix, gaussian_kernel
-import time
+from Assignment2.softsvmrbf import softsvmbf, gaussian_kernel
 import matplotlib.patches as mpatches
 
 
@@ -64,18 +63,12 @@ def fold_cross_validation(k, flag):
             sub_y_train = resizeArray(np.delete(split_y_train, i, 0)).flatten()
             split_x_test = split_x_train[i]
             split_y_test = split_y_train[i]
-            start = time.perf_counter()
             if flag:
                 alpha = softsvmbf(c[0], c[1], sub_x_train, sub_y_train)
                 curr_err = mrbf_error(alpha, sub_x_train, split_x_test, split_y_test, c[1])
             else:
                 w = softsvm(c, sub_x_train, sub_y_train)
                 curr_err = svm_error(w, split_x_test, split_y_test)
-            end = time.perf_counter()
-            if (flag):
-                print ("softSVMrbf took ", (end - start) / 60, " minutes")
-            else:
-                print("softSVM took ", (end - start) / 60, " minutes")
             err.append(curr_err)
         comb_err.append(np.mean(err))
     combo = combination[np.argmin(np.asarray(comb_err))]
@@ -97,13 +90,11 @@ def resizeArray(A: np.ndarray):
     return A.reshape((a*b, c))
 
 def Question4b():
-    startFirst = time.perf_counter()
     (err, optCombo), comb_errRBF, combinationsRBF = fold_cross_validation(5, 1)
     print("SoftSVMrbf results are:")
     print("The optimal combination (lambda, sigma) is ", optCombo)
     print("The optimal error is ", err)
 
-    endFirst = time.perf_counter()
     print()
 
     (err, optCombo), comb_err, combinations = fold_cross_validation(5, 0)
@@ -111,7 +102,6 @@ def Question4b():
     print("The optimal lambda is ", optCombo)
     print("The optimal error is ", err)
 
-    endSecond = time.perf_counter()
 
     print()
     printAllErr(combinationsRBF, comb_errRBF, 1)
@@ -119,10 +109,6 @@ def Question4b():
     printAllErr(combinations, comb_err, 0)
     print()
 
-    print("SoftSVMrbf took ", (endFirst - startFirst) / 60, " minutes")
-    print("SoftSVM took ", (endSecond - endFirst) / 60, " minutes")
-    print("overall time passed is ", (endSecond - startFirst) / 60, " minutes")
-    print("Itamar beat Tali in a pop quiz in Intro to Studying and analyzing of big data!")
 
 def printAllErr(combination, error, flag):
     for i in range(len(error)):
